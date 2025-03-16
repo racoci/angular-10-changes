@@ -7,10 +7,6 @@ import {BehaviorSubject} from 'rxjs';
 export class MessagesService {
   messages$ = new BehaviorSubject<string[]>([]);
   private messages: string[] = [];
-  get allMessages() {
-    return [...this.messages];
-  }
-
   addMessage(message: string) {
     this.messages = [...this.messages, message];
     this.messages$.next(this.messages);

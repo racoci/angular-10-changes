@@ -1,5 +1,7 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit} from '@angular/core';
 import {MessagesService} from "../messages.service";
+import {BehaviorSubject} from "rxjs";
+import {AsyncPipe} from "@angular/common";
 
 @Component({
   selector: 'app-messages-list',
@@ -7,24 +9,15 @@ import {MessagesService} from "../messages.service";
   templateUrl: './messages-list.component.html',
   styleUrl: './messages-list.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    AsyncPipe
+  ]
 })
-export class MessagesListComponent implements OnInit {
+export class MessagesListComponent {
   constructor(
     private messagesService: MessagesService,
-    private changeDetectionReference: ChangeDetectorRef,
-    private destroyRef: DestroyRef
   ) {}
-  messages: string[] = []
-
-  ngOnInit() {
-    const subscription = this.messagesService.messages$.subscribe((messages) => {
-      this.messages = messages;
-      this.changeDetectionReference.markForCheck();
-    });
-    this.destroyRef.onDestroy(() => {
-      subscription.unsubscribe();
-    });
-  }
+  messages$: BehaviorSubject<string[]> = this.messagesService.messages$;
 
   get debugOutput() {
     console.log('[MessagesList] "debugOutput" binding re-evaluated.');
