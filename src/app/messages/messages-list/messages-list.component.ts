@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit} from '@angular/core';
 import {MessagesService} from "../messages.service";
 
 @Component({
@@ -8,10 +8,22 @@ import {MessagesService} from "../messages.service";
   styleUrl: './messages-list.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MessagesListComponent {
-  constructor(private messagesService: MessagesService) {}
-  get  messages() {
-    return this.messagesService.allMessages;
+export class MessagesListComponent implements OnInit {
+  constructor(
+    private messagesService: MessagesService,
+    private changeDetectionReference: ChangeDetectorRef,
+    private destroyRef: DestroyRef
+  ) {}
+  messages: string[] = []
+
+  ngOnInit() {
+    const subscription = this.messagesService.messages$.subscribe((messages) => {
+      this.messages = messages;
+      this.changeDetectionReference.markForCheck();
+    });
+    this.destroyRef.onDestroy(() => {
+      subscription.unsubscribe();
+    });
   }
 
   get debugOutput() {
