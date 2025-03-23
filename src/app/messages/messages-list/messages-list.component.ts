@@ -1,23 +1,13 @@
-import {ChangeDetectionStrategy, Component} from '@angular/core';
-import {MessagesService} from "../messages.service";
-import {BehaviorSubject} from "rxjs";
-import {AsyncPipe} from "@angular/common";
+import { Component, input } from '@angular/core';
 
 @Component({
   selector: 'app-messages-list',
   standalone: true,
   templateUrl: './messages-list.component.html',
   styleUrl: './messages-list.component.css',
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [
-    AsyncPipe
-  ]
 })
 export class MessagesListComponent {
-  constructor(
-    private messagesService: MessagesService,
-  ) {}
-  messages$: BehaviorSubject<string[]> = this.messagesService.messages$;
+  messages = input.required<string[]>();
 
   get debugOutput() {
     console.log('[MessagesList] "debugOutput" binding re-evaluated.');
